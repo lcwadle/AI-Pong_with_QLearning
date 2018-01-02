@@ -81,6 +81,22 @@ class Pong:
 
             reward = 1
 
+        # Paddle bounce
+        #if self.ball.x + self.ball.x_velocity <= 0 and self.ball.y + self.ball.y_velocity >= self.paddle2.y and self.ball.y + self.ball.y_velocity <= self.paddle2.y + self.paddle2.height:
+            #print("bounce!")
+            #self.ball.x = -(self.ball.x + self.ball.x_velocity)
+            #print(self.ball.x)
+            #self.ball.x_velocity = -self.ball.x_velocity + random.uniform(-0.015, 0.015)
+            #self.ball.y_velocity = self.ball.y_velocity + random.uniform(-0.03, 0.03)
+
+            # Maintain minimum x velocities
+            #if self.ball.x_velocity < 0 and self.ball.x_velocity > -0.03:
+                #self.ball.x_velocity = -0.03
+            #if self.ball.x_velocity > 0 and self.ball.x_velocity < 0.03:
+                #self.ball.x_velocity = 0.03
+
+            #reward = 0
+
         self.ball.x = self.ball.x + self.ball.x_velocity
         self.ball.y = self.ball.y + self.ball.y_velocity
 
@@ -88,69 +104,89 @@ class Pong:
             #print(self.ball.x)
             reward = -1
             self.ball.missed = True
+        #elif self.ball.x <= 0:
+            #reward = 100
+            #self.ball.missed = True
         else:
             # Update grid display
             #print(str(self.ball.x) + "," + str(self.ball.y))
             #print(str(int(self.ball.y*self.board_y_size)) + "," + str(int(self.ball.x*self.board_x_size)))
             self.grid[int(self.ball.y*(self.board_y_size-1))][int(self.ball.x*(self.board_x_size-1))] = "*"
 
+        if self.ball.x <= 0:
+            self.paddle2.missed = True
+
         return reward
 
-    def create_paddle(self, paddle_y, paddle_height, paddle_speed):
-        # Create paddle
-        self.paddle = Paddle.Paddle(paddle_y, paddle_height, paddle_speed)
+    def create_paddle(self, paddle_y, paddle_height, paddle_speed, paddle_num):
+        if paddle_num == 1:
+            # Create paddle
+            self.paddle = Paddle.Paddle(paddle_y, paddle_height, paddle_speed)
 
-        # Convert paddle to discrete integers based on board size
-        #self.paddle.y *= self.board_y_size
-        #self.paddle.height *= self.board_y_size
+            # Convert paddle to discrete integers based on board size
+            #self.paddle.y *= self.board_y_size
+            #self.paddle.height *= self.board_y_size
 
-        for i in range(int(self.paddle.height*self.board_y_size)):
-            self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = "|"
+            for i in range(int(self.paddle.height*self.board_y_size)):
+                self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = "|"
+        else:
+            self.paddle2 = Paddle.Paddle(paddle_y, paddle_height, paddle_speed)
 
-    def move_paddle(self, action):
+            # Convert paddle to discrete integers based on board size
+            #self.paddle.y *= self.board_y_size
+            #self.paddle.height *= self.board_y_size
+
+            for i in range(int(self.paddle.height*self.board_y_size)):
+                self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][0] = "|"
+
+    def move_paddle(self, paddle, action):
+        if paddle == self.paddle:
+            x = self.board_x_size-1
+        if paddle == self.paddle2:
+            x = 0
+
         # Reset current position to " "
-        for i in range(int(self.paddle.height*self.board_y_size)):
-            self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = " "
+        for i in range(int(paddle.height*self.board_y_size)):
+            self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = " "
 
         # Move = 1
-        if action == 1 and self.paddle.y - self.paddle.speed >= 0:
+        if action == 1 and paddle.y - paddle.speed >= 0:
             #print("Move 1")
-            self.paddle.y -= self.paddle.speed
-            for i in range(int(self.paddle.height*self.board_y_size)):
-                self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = "|"
+            paddle.y -= paddle.speed
+            for i in range(int(paddle.height*self.board_y_size)):
+                self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
         elif action == 1:
             #print("Move 1")
-            self.paddle.y == 0
-            for i in range(int(self.paddle.height*self.board_y_size)):
-                self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = "|"
+            paddle.y == 0
+            for i in range(int(paddle.height*self.board_y_size)):
+                self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
 
         # Move = -1
-        if action == -1 and self.paddle.y + self.paddle.height + self.paddle.speed <= 1:
+        if action == -1 and paddle.y + paddle.height + paddle.speed <= 1:
             #print("Move -1")
-            self.paddle.y += self.paddle.speed
-            for i in range(int(self.paddle.height*self.board_y_size)):
-                self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = "|"
+            paddle.y += paddle.speed
+            for i in range(int(paddle.height*self.board_y_size)):
+                self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
         elif action == -1:
             #print("Move -1")
-            self.paddle.y == 1 - self.paddle.height
-            for i in range(int(self.paddle.height*self.board_y_size)):
-                self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = "|"
+            paddle.y == 1 - paddle.height
+            for i in range(int(paddle.height*self.board_y_size)):
+                self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
 
         # Move = 0
         if action == 0:
             #print("Move 0")
-            for i in range(int(self.paddle.height*self.board_y_size)):
-                self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = "|"
+            for i in range(int(paddle.height*self.board_y_size)):
+                self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
 
     def print_board(self):
-        for _ in range(self.board_x_size):
+        for _ in range(self.board_x_size-1):
             print("-", end="")
         print("-")
         for i in range(self.board_y_size):
-            print("|", end="")
             for j in range(self.board_x_size-1):
                 print(self.grid[i][j], end="")
             print(self.grid[i][self.board_x_size-1])
-        for _ in range(self.board_x_size):
+        for _ in range(self.board_x_size-1):
             print("-", end="")
         print("-")

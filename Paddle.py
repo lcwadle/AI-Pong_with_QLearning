@@ -3,3 +3,4 @@ class Paddle:
         self.y = paddle_y
         self.height = paddle_height
         self.speed = paddle_speed
+        self.missed = False

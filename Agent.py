@@ -6,18 +6,20 @@ import os
 actions = [1, 0, -1]
 alpha = 0.2
 gamma = 0.9
-randomness = 50
+randomness = 200
 
 qLearn = QLearn.QLearn(actions, randomness, 1.0, alpha, gamma)
 trials = 100000
 
+wins = 0
 for i in range(trials):
 
     qLearn.epsilon = (trials - i) / trials
 
-    pong = Pong.Pong(12, 12)
+    pong = Pong.Pong(14, 14)
     pong.create_ball(0.5, 0.5, 0.03, 0.01)
-    pong.create_paddle(0.5 - 0.2 / 2, 0.2, 0.04)
+    pong.create_paddle(0.5 - 0.2 / 2, 0.2, 0.04, 1)
+    pong.create_paddle(0.5 - 0.2 / 2, 0.2, 0.02, 2)
 
     old_state = None
 
@@ -52,7 +54,15 @@ for i in range(trials):
         action = qLearn.choose_action_n(new_state)
 
         # Move ball and paddle
-        pong.move_paddle(action)
+        pong.move_paddle(pong.paddle, action)
+
+        #if pong.ball.y < pong.paddle2.y + pong.paddle2.height / 2:
+            #pong.move_paddle(pong.paddle2, 1)
+        #elif pong.ball.y > pong.paddle2.y + pong.paddle2.height / 2:
+            #pong.move_paddle(pong.paddle2, -1)
+        #else:
+            #pong.move_paddle(pong.paddle2, 0)
+
         reward = pong.move_ball()
 
         bounces += reward
@@ -89,16 +99,22 @@ for i in range(trials):
             #os.system("clear") # Linux - OSX
             #os.system("cls") # Windows
 
+    #if pong.paddle2.missed:
+        #wins += 1
+    #print(wins)
+
 # Tests
 tests = 1000
 average_bounces = 0
+wins = 0
 for i in range(tests):
 
     qLearn.epsilon = 0.0
 
-    pong = Pong.Pong(12, 12)
+    pong = Pong.Pong(14, 14)
     pong.create_ball(0.5, 0.5, 0.03, 0.01)
-    pong.create_paddle(0.5 - 0.2 / 2, 0.2, 0.04)
+    pong.create_paddle(0.5 - 0.2 / 2, 0.2, 0.04, 1)
+    pong.create_paddle(0.5 - 0.2 / 2, 0.2, 0.02, 2)
 
     old_state = None
 
@@ -133,7 +149,15 @@ for i in range(tests):
         action = qLearn.choose_action(new_state)
 
         # Move ball and paddle
-        pong.move_paddle(action)
+        pong.move_paddle(pong.paddle, action)
+
+        #if pong.ball.y < pong.paddle2.y + pong.paddle2.height / 2:
+            #pong.move_paddle(pong.paddle2, 1)
+        #elif pong.ball.y > pong.paddle2.y + pong.paddle2.height / 2:
+            #pong.move_paddle(pong.paddle2, -1)
+        #else:
+            #pong.move_paddle(pong.paddle2, 0)
+
         reward = pong.move_ball()
 
         bounces += reward
@@ -171,8 +195,13 @@ for i in range(tests):
             #os.system("cls") # Windows
 
     average_bounces += bounces
+    #print(pong.ball.x)
+    #input()
+    #if pong.paddle2.missed:
+        #wins += 1
 
 print("Average Bounces: " + str(average_bounces / tests))
 print("Alpha: " + str(alpha))
 print("Gamma: " + str(gamma))
 print("Random factor: " + str(randomness))
+#print("Win rate: " + str(float(wins/tests)))
