@@ -1,4 +1,4 @@
-# Pong-with-QLearning
+# Pong with QLearning
 
 ## Single Player
 Pong game where the paddle tries to bounce the ball as many times as possible off a box enclosed on three sides being rewarded positively when it manages to bounces the ball and negatively when the ball is able to get past the paddle.  All other scenerios result in no reward for the agent.
