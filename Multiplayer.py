@@ -47,21 +47,17 @@ for i in range(trials):
 
     # Game loop
     while not pong.ball.missed:
-        #print(str(pong.ball.x) + "," + str(pong.ball.y))
-        #print(pong.paddle.y)
-        #pong.print_board()
-        #print("Bounces: " + str(bounces))
         action = qLearn.choose_action_n(new_state)
 
         # Move ball and paddle
         pong.move_paddle(pong.paddle, action)
 
-        #if pong.ball.y < pong.paddle2.y + pong.paddle2.height / 2:
-            #pong.move_paddle(pong.paddle2, 1)
-        #elif pong.ball.y > pong.paddle2.y + pong.paddle2.height / 2:
-            #pong.move_paddle(pong.paddle2, -1)
-        #else:
-            #pong.move_paddle(pong.paddle2, 0)
+        if pong.ball.y < pong.paddle2.y + pong.paddle2.height / 2:
+            pong.move_paddle(pong.paddle2, 1)
+        elif pong.ball.y > pong.paddle2.y + pong.paddle2.height / 2:
+            pong.move_paddle(pong.paddle2, -1)
+        else:
+            pong.move_paddle(pong.paddle2, 0)
 
         reward = pong.move_ball()
 
@@ -93,15 +89,8 @@ for i in range(trials):
         # Learn from previous actions
         qLearn.learn(old_state, action, reward, new_state)
 
-        #input()
-
-        #if not pong.ball.missed:
-            #os.system("clear") # Linux - OSX
-            #os.system("cls") # Windows
-
-    #if pong.paddle2.missed:
-        #wins += 1
-    #print(wins)
+    if pong.paddle2.missed:
+        wins += 1
 
 # Tests
 tests = 1000
@@ -142,21 +131,17 @@ for i in range(tests):
 
     # Game loop
     while not pong.ball.missed:
-        #print(str(pong.ball.x) + "," + str(pong.ball.y))
-        #print(pong.paddle.y)
-        #pong.print_board()
-        #print("Bounces: " + str(bounces))
         action = qLearn.choose_action(new_state)
 
         # Move ball and paddle
         pong.move_paddle(pong.paddle, action)
 
-        #if pong.ball.y < pong.paddle2.y + pong.paddle2.height / 2:
-            #pong.move_paddle(pong.paddle2, 1)
-        #elif pong.ball.y > pong.paddle2.y + pong.paddle2.height / 2:
-            #pong.move_paddle(pong.paddle2, -1)
-        #else:
-            #pong.move_paddle(pong.paddle2, 0)
+        if pong.ball.y < pong.paddle2.y + pong.paddle2.height / 2:
+            pong.move_paddle(pong.paddle2, 1)
+        elif pong.ball.y > pong.paddle2.y + pong.paddle2.height / 2:
+            pong.move_paddle(pong.paddle2, -1)
+        else:
+            pong.move_paddle(pong.paddle2, 0)
 
         reward = pong.move_ball()
 
@@ -188,20 +173,12 @@ for i in range(tests):
         # Learn from previous actions
         qLearn.learn(old_state, action, reward, new_state)
 
-        #input()
-
-        #if not pong.ball.missed:
-            #os.system("clear") # Linux - OSX
-            #os.system("cls") # Windows
-
     average_bounces += bounces
-    #print(pong.ball.x)
-    #input()
-    #if pong.paddle2.missed:
-        #wins += 1
+    if pong.paddle2.missed:
+        wins += 1
 
 print("Average Bounces: " + str(average_bounces / tests))
 print("Alpha: " + str(alpha))
 print("Gamma: " + str(gamma))
 print("Random factor: " + str(randomness))
-#print("Win rate: " + str(float(wins/tests)))
+print("Win rate: " + str(float(wins/tests)))

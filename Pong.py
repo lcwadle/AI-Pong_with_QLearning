@@ -18,38 +18,13 @@ class Pong:
     def create_ball(self, x, y, init_x_velocity, init_y_velocity):
         # Create ball
         self.ball = Ball.Ball(x, y, init_x_velocity, init_y_velocity)
-
-        # Convert ball to discrete integers based on board size
-        #self.ball.x *= self.board_x_size
-        #self.ball.y *= self.board_y_size
-        #self.ball.x_velocity *= self.board_x_size
-        #self.ball.y_velocity *= self.board_y_size
-
         self.grid[int(self.ball.y*(self.board_y_size-1))][int(self.ball.x*(self.board_x_size-1))] = "*"
 
     def move_ball(self):
         reward = 0
 
-        #print("Ball - " + str(self.ball.y + self.ball.y_velocity) + "," + str(self.ball.x + self.ball.x_velocity))
-        #print("Paddle - " + str(self.paddle.y) + "," + str(self.paddle.y + self.paddle.height))
-
         # Reset current position to " "
         self.grid[int(self.ball.y*(self.board_y_size-1))][int(self.ball.x*(self.board_x_size-1))] = " "
-
-        # Velocity
-        # X velocity
-        #if (self.ball.x_velocity > 0):
-            #ball_x_velocity = 1
-        #else:
-            #ball_x_velocity = -1
-
-        # Y velocity
-        #if (abs(self.ball_y_velocity) < 0.015):
-            #ball_y_velocity = 0
-        #elif self.ball.y_velocity > 0:
-            #ball_y_velocity = 1
-        #else:
-            #ball_y_velocity = -1
 
         # Ball bounce
         # X bounce
@@ -67,9 +42,7 @@ class Pong:
 
         # Paddle bounce
         if self.ball.x + self.ball.x_velocity >= 1 and self.ball.y + self.ball.y_velocity >= self.paddle.y and self.ball.y + self.ball.y_velocity <= self.paddle.y + self.paddle.height:
-            #print("bounce!")
             self.ball.x = 2 - self.ball.x - self.ball.x_velocity
-            #print(self.ball.x)
             self.ball.x_velocity = -self.ball.x_velocity + random.uniform(-0.015, 0.015)
             self.ball.y_velocity = self.ball.y_velocity + random.uniform(-0.03, 0.03)
 
@@ -81,36 +54,14 @@ class Pong:
 
             reward = 1
 
-        # Paddle bounce
-        #if self.ball.x + self.ball.x_velocity <= 0 and self.ball.y + self.ball.y_velocity >= self.paddle2.y and self.ball.y + self.ball.y_velocity <= self.paddle2.y + self.paddle2.height:
-            #print("bounce!")
-            #self.ball.x = -(self.ball.x + self.ball.x_velocity)
-            #print(self.ball.x)
-            #self.ball.x_velocity = -self.ball.x_velocity + random.uniform(-0.015, 0.015)
-            #self.ball.y_velocity = self.ball.y_velocity + random.uniform(-0.03, 0.03)
-
-            # Maintain minimum x velocities
-            #if self.ball.x_velocity < 0 and self.ball.x_velocity > -0.03:
-                #self.ball.x_velocity = -0.03
-            #if self.ball.x_velocity > 0 and self.ball.x_velocity < 0.03:
-                #self.ball.x_velocity = 0.03
-
-            #reward = 0
-
         self.ball.x = self.ball.x + self.ball.x_velocity
         self.ball.y = self.ball.y + self.ball.y_velocity
 
         if self.ball.x >= 1:
-            #print(self.ball.x)
             reward = -1
             self.ball.missed = True
-        #elif self.ball.x <= 0:
-            #reward = 100
-            #self.ball.missed = True
         else:
             # Update grid display
-            #print(str(self.ball.x) + "," + str(self.ball.y))
-            #print(str(int(self.ball.y*self.board_y_size)) + "," + str(int(self.ball.x*self.board_x_size)))
             self.grid[int(self.ball.y*(self.board_y_size-1))][int(self.ball.x*(self.board_x_size-1))] = "*"
 
         if self.ball.x <= 0:
@@ -123,18 +74,10 @@ class Pong:
             # Create paddle
             self.paddle = Paddle.Paddle(paddle_y, paddle_height, paddle_speed)
 
-            # Convert paddle to discrete integers based on board size
-            #self.paddle.y *= self.board_y_size
-            #self.paddle.height *= self.board_y_size
-
             for i in range(int(self.paddle.height*self.board_y_size)):
                 self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][self.board_x_size-1] = "|"
         else:
             self.paddle2 = Paddle.Paddle(paddle_y, paddle_height, paddle_speed)
-
-            # Convert paddle to discrete integers based on board size
-            #self.paddle.y *= self.board_y_size
-            #self.paddle.height *= self.board_y_size
 
             for i in range(int(self.paddle.height*self.board_y_size)):
                 self.grid[int(self.paddle.y*(self.board_y_size-1)+i)][0] = "|"
@@ -151,31 +94,26 @@ class Pong:
 
         # Move = 1
         if action == 1 and paddle.y - paddle.speed >= 0:
-            #print("Move 1")
             paddle.y -= paddle.speed
             for i in range(int(paddle.height*self.board_y_size)):
                 self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
         elif action == 1:
-            #print("Move 1")
             paddle.y == 0
             for i in range(int(paddle.height*self.board_y_size)):
                 self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
 
         # Move = -1
         if action == -1 and paddle.y + paddle.height + paddle.speed <= 1:
-            #print("Move -1")
             paddle.y += paddle.speed
             for i in range(int(paddle.height*self.board_y_size)):
                 self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
         elif action == -1:
-            #print("Move -1")
             paddle.y == 1 - paddle.height
             for i in range(int(paddle.height*self.board_y_size)):
                 self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
 
         # Move = 0
         if action == 0:
-            #print("Move 0")
             for i in range(int(paddle.height*self.board_y_size)):
                 self.grid[int(paddle.y*(self.board_y_size-1)+i)][x] = "|"
 
